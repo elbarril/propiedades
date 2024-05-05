@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    background-color: lightgray;
+}
+
+h1 {
+    color: blue;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+header {
+    background-color: darkgray;
+    border-bottom: 5px solid blue;
+}
+
+header > a {
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+}
+
+nav > * {
+    background-color: blue;
+    border-radius: 15px;
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    max-width: 30%;
+    word-break: break-all;
+}
+
+@media (max-width:560px) {
+    nav {
+        flex-wrap: wrap;
+    }
+
+    nav > * {
+        max-width: 100%;
+        margin: 5px auto;
+    }
+}
+
+main, header {
+    padding: 20px 40px;
+}
+
+#props {
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#props > * {
+    margin-top: 20px;
+    list-style: none;
+    border: 5px solid blue;
+    padding: 10px;
+    background-color: white;
+    width: 32%;
+}
+
+@media (max-width:960px) {
+    #props > * {
+        width: 48%;
+    }
+}
+
+@media (max-width:560px) {
+    #props > * {
+        width: 100%;
+    }
+}
+
+#props > .revised {
+    border-color: green;
+}
+
+#props > .revised > .prop-header{
+    color: green;
+}
+
+#props > .revised > a {
+    background-color: green;
+}
+
+#props > * .prop-comment{
+    padding: 10px;
+    border: 3px solid black;
+    margin-bottom: 5px;
+}
+
+#props > * .prop-content{
+    overflow: auto;
+    padding-right: 10px;
+    word-break: break-all;
+}
+
+#props > .rejected {
+    display: none;
+}
+
+#props > * > .prop-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;
+    color: blue;
+    width: 100%;
+    font-weight: 800;
+}
+
+#props > * > .prop-header > * {
+    display: block;
+}
+
+#props > * a {
+    margin-top: 10px;
+    width: 100%;
+    background-color: blue;
+    color: white;
+    font-weight: 700;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    text-transform: capitalize;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+#props > * a:hover {
+    background-color: blueviolet;
+}
+
+#props > * .forms {
+    display: flex;
+    justify-content: center;
+}
+
+#props > * .forms > * {
+    width: 100%;
+    text-align: center;
+}
+
+.forms > form > * {
+    width: 100%;
+}
+
+form > [type="submit"]{
+    padding: 10px;
+}

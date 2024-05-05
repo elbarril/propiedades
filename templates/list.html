@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROPIEDADES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+    <header>
+        <p>
+            <span>
+                <a href="/">back</a>
+            </span>
+        </p>
+        <p>
+            {% for location in locations %}
+                <span>{{ location|replace("-", " ")|title }},</span>
+            {% endfor %}
+        </p>
+        <p>
+            {% for amb in ambs %}
+                <span>{{ amb|replace("-", " ")|title }},</span>
+            {% endfor %}
+        </p>
+        <a href="{{ props_url }}" target="_blank">
+            <h1>{{ source }}: <span id="amount">{{ props|length }}</span></h1>
+        </a>
+
+        <nav>
+            <a href="/{{ name }}/{{ source }}">Propiedades</a>
+            <a href="/{{ name }}/{{ source }}/search">Buscar</a>
+            <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
+        </nav>
+    </header>
+
+    <main>
+        <ul id="props">
+            {% for url,prop in props.items() %}
+                <li id="{{loop.index}}" class="{% if prop.revised %}revised{% endif %}">
+                    <div class="prop-header">
+                        <span class="index">{{loop.index}}</span>
+                        <span class="date">{{ prop.date }}</span>
+                    </div>
+                    {% if prop.comment %}
+                        <div class="prop-comment">
+                            <h2>COMENTARIO</h2>
+                            {{ prop.comment }}
+                        </div>
+                    {% endif %}
+
+                    <div class="prop-content">
+                        {% if prop.data %}
+                            <ul>
+                                {% for key, value in prop.data.items() %}
+                                    <li><strong>{{ key }}:</strong>{{ value }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ prop.content }}
+                        {% endif %}
+                        
+                        <form action="/{{ name }}/{{ source }}/comment" method="post">
+                            <textarea name="comment" rows="5" cols="41" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
+                            <input type="hidden" name="prop" value="{{ url }}">
+                            <input type="hidden" name="list_id" value="{{loop.index}}">
+                            <input type="submit" value="Comentar" style="float: inline-end;">
+                        </form>
+                    </div>
+
+                    <a href="{{ url }}" target="_blank">Abrir</a>
+
+                    <div class="forms">
+                        {% if not prop.rejected %}
+                            <form action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
+                                <input type="hidden" name="prop" value="{{ url }}">
+                                <input type="hidden" name="list_id" value="{{loop.index}}">
+                                <input type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                            </form>
+                        {% endif %}
+
+                        <form action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
+                            <input type="hidden" name="prop" value="{{ url }}">
+                            <input type="hidden" name="list_id" value="{{loop.index}}">
+                            <input type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
