@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROPIEDADES</title>
+    {% if name and source %}
+        <title>{{ name }} - {{ source }}</title>
+    {% else %}
+        <title>PROPIEDADES</title>
+    {% endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
@@ -27,12 +31,12 @@
             {% endfor %}
         </p>
         <a href="{{ props_url }}" target="_blank">
-            <h1>{{ source }}: <span id="amount">{{ props|length }}</span></h1>
+            <h1>{{ name }} - {{ source }}: <span id="amount">{{ props|length }}</span></h1>
         </a>
 
         <nav>
             <a href="/{{ name }}/{{ source }}">Propiedades</a>
-            <a href="/{{ name }}/{{ source }}/search">Buscar</a>
+            <a class="searchButton" href="/{{ name }}/{{ source }}/search">Buscar</a>
             <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
         </nav>
     </header>
@@ -67,7 +71,7 @@
                             <textarea name="comment" rows="5" cols="41" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
                             <input type="hidden" name="prop" value="{{ url }}">
                             <input type="hidden" name="list_id" value="{{loop.index}}">
-                            <input type="submit" value="Comentar" style="float: inline-end;">
+                            <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;">
                         </form>
                     </div>
 
@@ -78,19 +82,21 @@
                             <form action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
                                 <input type="hidden" name="prop" value="{{ url }}">
                                 <input type="hidden" name="list_id" value="{{loop.index}}">
-                                <input type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                                <input class="reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
                             </form>
                         {% endif %}
 
                         <form action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
                             <input type="hidden" name="prop" value="{{ url }}">
                             <input type="hidden" name="list_id" value="{{loop.index}}">
-                            <input type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                            <input class="rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
                         </form>
                     </div>
                 </li>
             {% endfor %}
         </ul>
     </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
