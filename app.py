@@ -126,7 +126,7 @@ def argenprop_rejected(name):
     entity = SEARCH[name]
     locations = entity.get("locations")
     ambs = entity.get("ambs").get("argenprop")
-    argenprop_file = "./static/json/zonaprop_" + name + ".json"
+    argenprop_file = "./static/json/argenprop_" + name + ".json"
 
     url = p.get_url(locations, ambs, ARGENPROP)
 
@@ -139,7 +139,7 @@ def argenprop_search(name):
     entity = SEARCH[name]
     locations = entity.get("locations")
     ambs = entity.get("ambs").get("argenprop")
-    argenprop_file = "./static/json/zonaprop_" + name + ".json"
+    argenprop_file = "./static/json/argenprop_" + name + ".json"
     min_meters = entity.get("min_meters")
     max_value = entity.get("max_value")
     p.search_props(locations, ambs, argenprop_file, min_meters, max_value, ARGENPROP)
@@ -149,7 +149,7 @@ def argenprop_search(name):
 @app.route('/<name>/argenprop/comment', methods=["POST"])
 def argenprop_comment(name):
     if request.method == 'POST':
-        argenprop_file = "./static/json/zonaprop_" + name + ".json"
+        argenprop_file = "./static/json/argenprop_" + name + ".json"
         prop = request.form.get("prop", "")
         comment = request.form.get("comment", "")
         list_id = request.form.get("list_id", "")
@@ -160,7 +160,7 @@ def argenprop_comment(name):
 @app.route('/<name>/argenprop/unrevise', methods=["POST"])
 def argenprop_unrevise(name):
     if request.method == 'POST':
-        argenprop_file = "./static/json/zonaprop_" + name + ".json"
+        argenprop_file = "./static/json/argenprop_" + name + ".json"
         prop = request.form.get("prop", "")
         list_id = request.form.get("list_id", "")
         p.unrevise_prop(prop, argenprop_file)
@@ -170,7 +170,7 @@ def argenprop_unrevise(name):
 @app.route('/<name>/argenprop/revise', methods=["POST"])
 def argenprop_revise(name):
     if request.method == 'POST':
-        argenprop_file = "./static/json/zonaprop_" + name + ".json"
+        argenprop_file = "./static/json/argenprop_" + name + ".json"
         prop = request.form.get("prop", "")
         list_id = request.form.get("list_id", "")
         p.revise_prop(prop, argenprop_file)
@@ -180,7 +180,7 @@ def argenprop_revise(name):
 @app.route('/<name>/argenprop/unreject', methods=["POST"])
 def argenprop_unreject(name):
     if request.method == 'POST':
-        argenprop_file = "./static/json/zonaprop_" + name + ".json"
+        argenprop_file = "./static/json/argenprop_" + name + ".json"
         prop = request.form.get("prop", "")
         list_id = request.form.get("list_id", "")
         p.unreject_prop(prop, argenprop_file)
@@ -190,7 +190,7 @@ def argenprop_unreject(name):
 @app.route('/<name>/argenprop/reject', methods=["POST"])
 def argenprop_reject(name):
     if request.method == 'POST':
-        argenprop_file = "./static/json/zonaprop_" + name + ".json"
+        argenprop_file = "./static/json/argenprop_" + name + ".json"
         prop = request.form.get("prop", "")
         list_id = request.form.get("list_id", "")
         p.reject_prop(prop, argenprop_file)
