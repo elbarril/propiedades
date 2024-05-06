@@ -15,10 +15,11 @@
 
         {% for name in names %}
             <div>
-                <h2>{{ name|title }}</h2>
-                <nav>
-                    <a href="/{{ name }}/argenprop">Argenprop</a>
-                    <a href="/{{ name }}/zonaprop">Zonaprop</a>
+                
+                <nav><h2>{{ name|title }}</h2>
+                    {% for source in sources %}
+                        <a href="/{{ name }}/{{ source }}">{{ source|title }}</a>
+                    {% endfor %}
                 </nav>
             </div>
         {% endfor %}

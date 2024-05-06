@@ -54,11 +54,15 @@ h1 {
     color: blue;
     width: 100%;
     text-transform: uppercase;
+    text-align: center;
 }
 
 h1, h2 {
-    text-align: center;
     word-break: break-all;
+}
+
+h2 {
+    font-size: 18px;
 }
 
 header {
@@ -74,9 +78,11 @@ nav {
     display: flex;
     justify-content: center;
     gap: 10px;
+    align-items: center;
+    margin: 5px auto;
 }
 
-nav > * {
+nav > a {
     background-color: blue;
     border-radius: 15px;
     color: white;
@@ -145,15 +151,21 @@ main, header {
 }
 
 #props > * .prop-comment{
-    padding: 10px;
-    border: 3px solid black;
+    padding: 5px;
+    border: 1px dotted black;
+    width: 100%;
     margin-bottom: 5px;
 }
 
 #props > * .prop-content{
     overflow: auto;
-    padding-right: 10px;
     word-break: break-all;
+}
+
+.prop-content ul li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dotted gray;
 }
 
 #props > .rejected {
@@ -163,7 +175,7 @@ main, header {
 #props > * > .prop-header {
     display: flex;
     justify-content: space-between;
-    font-size: 24px;
+    font-size: 18px;
     color: blue;
     width: 100%;
     font-weight: 800;
@@ -217,4 +229,8 @@ textarea {
 strong {
     margin-right: 5px;
     text-transform: capitalize;
+}
+
+img {
+    width: 100%;
 }
