@@ -36,18 +36,25 @@
 
         <nav>
             <a href="/{{ name }}/{{ source }}">Propiedades</a>
-            <a class="searchButton" href="/{{ name }}/{{ source }}/search">Buscar</a>
+            <a class="searchButton" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
             <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
+        </nav>
+
+        <nav>
+            Buscar
+            <input type="text" name="keywords">
         </nav>
     </header>
 
     <main>
         <ul id="props">
             {% for url,prop in props.items() %}
-                <li id="{{loop.index}}" class="{% if prop.revised %}revised{% endif %}">
+                <li id="{{  loop.index  }}" class="{% if prop.revised %}revised{% endif %} item">
                     <div class="prop-header">
                         {% if prop.title %}
                             <span>{{ prop.title }}</span>
+                        {% elif prop.id %}
+                            <span>{{ prop.id }}</span>
                         {% else %}
                             <span class="date">{{ prop.date }}</span>
                             <span class="index">{{ prop.index }}</span>
@@ -78,7 +85,7 @@
                         <form action="/{{ name }}/{{ source }}/comment" method="post">
                             <textarea name="comment" rows="5" cols="41" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
                             <input type="hidden" name="prop" value="{{ url }}">
-                            <input type="hidden" name="list_id" value="{{loop.index}}">
+                            <input type="hidden" name="list_id" value="{{ loop.index }}">
                             <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;">
                         </form>
                     </div>
@@ -89,14 +96,14 @@
                         {% if not prop.rejected %}
                             <form action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
                                 <input type="hidden" name="prop" value="{{ url }}">
-                                <input type="hidden" name="list_id" value="{{loop.index}}">
+                                <input type="hidden" name="list_id" value="{{ loop.index }}">
                                 <input class="reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
                             </form>
                         {% endif %}
 
                         <form action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
                             <input type="hidden" name="prop" value="{{ url }}">
-                            <input type="hidden" name="list_id" value="{{loop.index}}">
+                            <input type="hidden" name="list_id" value="{{ loop.index }}">
                             <input class="rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
                         </form>
                     </div>

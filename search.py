@@ -100,7 +100,8 @@ ZONAPROP = {
             "hace": "./div/div[2]/div[2]/div[2]"
         },
         "next_xpath": "//a[@data-qa='PAGING_%s']",
-        "path_attr": "data-to-posting"
+        "path_attr": "data-to-posting",
+        "id_attr": "data-id"
     }
 }
 
@@ -124,8 +125,9 @@ ARGENPROP = {
             "habitaciones": ".//ul[@class='card__main-features']/li[2]",
             "hace": "./div/div[2]/div[2]/div[2]",
         },
-        "next_xpath": "//li[@class='pagination__page']/a",
-        "path_attr": "href"
+        "next_xpath": "//li[@class='pagination__page']/a[text()='%s']",
+        "path_attr": "href",
+        "id_attr": "data-item-id-visibilidad"
     }
 }
 

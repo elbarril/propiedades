@@ -89,22 +89,23 @@ def update_prop(prop, update, file):
         props[prop].update(update)
     save_props(props, file)
 
-def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, prop_data_xpath, prop_image_xpath):
+def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, id_attr, prop_data_xpath, prop_image_xpath):
     driver = webdriver.Chrome()
     driver.get(url)
 
     element_to_wait_for = driver.find_element(By.XPATH, wait_xpath)
     wait = WebDriverWait(driver, timeout=5)
     wait.until(lambda d : element_to_wait_for.is_displayed())
-
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     props = driver.find_elements(By.XPATH, prop_xpath)
     props_list = []
 
     for prop in props:
         path = prop.get_attribute(path_attr)
+        id = prop.get_attribute(id_attr)
 
         data = {}
-
+        
         for key in prop_data_xpath:
             try:
                 value = prop.find_element(By.XPATH, prop_data_xpath[key])
@@ -119,6 +120,7 @@ def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, prop_data_xpa
             image_src = title = ""
 
         props_list.append({
+            "id": id,
             "path": path,
             "content": prop.text,
             "data": data,
@@ -156,39 +158,52 @@ def search_props(locations, ambs, file, min_meters, max_value, source):
     props = load_props(file)
 
     base = web_options.get("base_url")
-    xpaths = web_options.get("xpaths")
 
     keep_looking = True
     page = 1
     index = 0
     while keep_looking:
-        new_props, next_page = find_props(url, prop_xpath=xpaths["prop_xpath"], wait_xpath=xpaths["wait_xpath"], next_xpath=xpaths["next_xpath"] % str(page+1) if "%" in xpaths["next_xpath"] else xpaths["next_xpath"], path_attr=xpaths["path_attr"], prop_data_xpath=xpaths["prop_data_xpath"], prop_image_xpath=xpaths["prop_image_xpath"])
+        xpaths = dict(web_options.get("xpaths"))
+        xpaths["next_xpath"] = str(xpaths["next_xpath"] % str(page+1))
 
-        for prop in new_props:
+        new_props, next_page = find_props(url, **xpaths)
+
+        for new_prop in new_props:
             index += 1
-            path = prop["path"]
+            path = new_prop["path"]
             if not path: continue
-            content = prop["content"]
+            content = new_prop["content"]
             if "USD" in content: continue
             path = path if "http" in path else base[:-1] + path
             meters = get_prop_meters(content)
             price = get_prop_price(content)
             if meters < min_meters or price > max_value: continue
             
-            data = prop["data"]
-            image = prop["image"]
-            title = prop["title"]
+            id = new_prop["id"]
+            data = new_prop["data"]
+            image = new_prop["image"]
+            title = new_prop["title"]
 
-            props.update({path: {
-                "date": date,
-                "index": index,
-                "content": content,
-                "revised": False,
-                "rejected": False,
-                "data": data,
-                "image": image,
-                "title": title
-            }})
+            if not path in props:
+                prop = {
+                    "id": id,
+                    "date": date,
+                    "index": index,
+                    "content": content,
+                    "revised": False,
+                    "rejected": False,
+                    "data": data,
+                    "image": image,
+                    "title": title
+                }
+
+                props.update({path: prop})
+            elif "image" not in props[path] or not bool(props[path]["image"]):
+                props[path].update({"image": image})
+            elif "title" not in props[path] or not bool(props[path]["title"]):
+                props[path].update({"title": title})
+            elif "data" not in props[path] or not bool(props[path]["data"]):
+                props[path].update({"data": data})
 
         if page > len(locations) // 2 or next_page is None:
             keep_looking = False
