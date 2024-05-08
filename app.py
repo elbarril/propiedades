@@ -4,14 +4,14 @@ import prop as p
 
 DEBUG = True
 
-def get_list_template(name, source, **options):
+def get_list_template(name, source, can_search, **options):
     entity = p.get_entity(name)
     locations = p.get_location_names(entity["locations"])
     ambs = p.get_amb_names(entity["ambs"], source)
     file = p.get_file_path(source, name)
     url = p.get_url(locations, ambs, source)
     props = p.load_props(file, **options)
-    return render_template('list.html', source=source, props=props, props_url=url, locations=locations, ambs=ambs, name=name)
+    return render_template('list.html', source=source, props=props, props_url=url, locations=locations, ambs=ambs, name=name, can_search=can_search)
 
 def perform_request(name, source, update_field, extra_path=""):
     if request.method == 'POST':
@@ -57,10 +57,6 @@ def home():
     amb_names = p.get_ambs()
     return render_template('index.html', entities=entities, sources=sources, location_names=location_names, amb_names=amb_names)
 
-@app.route('/<name>/<source>')
-def list(name, source):
-    return get_list_template(name, source, sort="date", if_not="rejected")
-
 @app.route('/<name>/<source>/rejected')
 def list_rejected(name, source):
     return get_list_template(name, source, sort="date", if_yes="rejected")
@@ -98,7 +94,16 @@ def reject(name, source):
     return perform_request(name, source, ("rejected", True))
 
 if __name__ == '__main__':
+    @app.route('/<name>/<source>')
+    def list(name, source):
+        return get_list_template(name, source, can_search=True, sort="date", if_not="rejected")
+
     if DEBUG:
         app.run(debug=True)
     else:
         app.run(debug=False, host="0.0.0.0")
+
+else:
+    @app.route('/<name>/<source>')
+    def list(name, source):
+        return get_list_template(name, source, can_search=False, sort="date", if_not="rejected")
