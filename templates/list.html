@@ -36,7 +36,9 @@
 
         <nav>
             <a href="/{{ name }}/{{ source }}">Propiedades</a>
-            <a class="searchButton" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
+            {% if can_search %}
+                <a class="searchButton" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
+            {% endif %}
             <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
         </nav>
 
