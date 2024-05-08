@@ -1,0 +1,245 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    background-color: lightgray;
+}
+
+body.loading {
+   height: 100%;
+   overflow-y: hidden;
+}
+
+.loader{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.loader p {
+    color: white;
+    padding: 20px;
+}
+
+.loader div{
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 100px;
+    border: 5px solid white;
+    border-bottom-color: red;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+h1 {
+    color: blue;
+    width: 100%;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+h1, h2 {
+    word-break: break-all;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+header {
+    background-color: darkgray;
+    border-bottom: 5px solid blue;
+}
+
+header > a {
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    margin: 5px auto;
+}
+
+nav > a {
+    background-color: blue;
+    border-radius: 15px;
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    max-width: 50%;
+    word-break: break-all;
+}
+
+@media (max-width:560px) {
+    nav {
+        flex-wrap: wrap;
+    }
+
+    nav > * {
+        max-width: 100%;
+        margin: 5px auto;
+    }
+}
+
+main, header {
+    padding: 20px 40px;
+}
+
+#props {
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#props > * {
+    margin-top: 20px;
+    list-style: none;
+    border: 5px solid blue;
+    padding: 10px;
+    background-color: white;
+    width: 32%;
+}
+
+@media (max-width:960px) {
+    #props > * {
+        width: 48%;
+    }
+}
+
+@media (max-width:560px) {
+    #props > * {
+        width: 100%;
+    }
+}
+
+#props > .revised {
+    border-color: green;
+}
+
+#props > .revised > .prop-header{
+    color: green;
+}
+
+#props > .revised > a {
+    background-color: green;
+}
+
+#props > * .prop-comment{
+    padding: 5px;
+    border: 1px dotted black;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+#props > * .prop-content{
+    overflow: auto;
+    word-break: break-all;
+}
+
+.prop-content ul li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dotted gray;
+}
+
+#props > .rejected {
+    display: none;
+}
+
+#props > * > .prop-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    color: blue;
+    width: 100%;
+    font-weight: 800;
+}
+
+#props > * > .prop-header > * {
+    display: block;
+}
+
+#props > * a {
+    margin-top: 10px;
+    width: 100%;
+    background-color: blue;
+    color: white;
+    font-weight: 700;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    text-transform: capitalize;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+#props > * a:hover {
+    background-color: blueviolet;
+}
+
+#props > * .forms {
+    display: flex;
+    justify-content: center;
+}
+
+#props > * .forms > * {
+    width: 100%;
+    text-align: center;
+}
+
+.forms > form > * {
+    width: 100%;
+}
+
+form > [type="submit"]{
+    padding: 10px;
+}
+
+textarea {
+    margin-top: 10px;
+    resize: none;
+}
+
+strong {
+    margin-right: 5px;
+    text-transform: capitalize;
+}
+
+img {
+    width: 100%;
+}
+
+.form-new {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 400px;
+    margin: 0 auto;
+    font-size: 18px;
+}

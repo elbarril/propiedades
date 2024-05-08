@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if name and source %}
+        <title>{{ name }} - {{ source }}</title>
+    {% else %}
+        <title>PROPIEDADES</title>
+    {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+    <header>
+        <p>
+            <span>
+                <a href="/#{{ name }}">back</a>
+            </span>
+        </p>
+        <p>
+            {% for location in locations %}
+                <span>{{ location|replace("-", " ")|title }},</span>
+            {% endfor %}
+        </p>
+        <p>
+            {% for amb in ambs %}
+                <span>{{ amb|replace("-", " ")|title }},</span>
+            {% endfor %}
+        </p>
+        <a href="{{ props_url }}" target="_blank">
+            <h1>{{ name }} - {{ source }}: <span id="amount">{{ props|length }}</span></h1>
+        </a>
+
+        <nav>
+            <a href="/{{ name }}/{{ source }}">Propiedades</a>
+            <a class="searchButton" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
+            <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
+        </nav>
+
+        <nav>
+            Buscar
+            <input type="text" name="keywords">
+        </nav>
+    </header>
+
+    <main>
+        <ul id="props">
+            {% for url,prop in props.items() %}
+                <li id="{{  loop.index  }}" class="{% if prop.revised %}revised{% endif %} item">
+                    <div class="prop-header">
+                        {% if prop.title %}
+                            <span>{{ prop.title }}</span>
+                        {% elif prop.id %}
+                            <span>{{ prop.id }}</span>
+                        {% else %}
+                            <span class="date">{{ prop.date }}</span>
+                            <span class="index">{{ prop.index }}</span>
+                        {% endif %}
+                    </div>
+                    {% if prop.comment %}
+                        <div class="prop-comment">
+                            <h2>COMENTARIO</h2>
+                            {{ prop.comment }}
+                        </div>
+                    {% endif %}
+
+                    <div class="prop-content">
+                        {% if prop.image %}
+                            <img src="{{ prop.image }}" alt="{{ prop.title }}">
+                        {% endif %}
+
+                        {% if prop.data %}
+                            <ul>
+                                {% for key, value in prop.data.items() %}
+                                    <li><strong>{{ key }}:</strong>{{ value }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ prop.content }}
+                        {% endif %}
+                        
+                        <form action="/{{ name }}/{{ source }}/comment" method="post">
+                            <textarea name="comment" rows="5" cols="41" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
+                            <input type="hidden" name="prop" value="{{ url }}">
+                            <input type="hidden" name="list_id" value="{{ loop.index }}">
+                            <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;">
+                        </form>
+                    </div>
+
+                    <a href="{{ url }}" target="_blank">Abrir</a>
+
+                    <div class="forms">
+                        {% if not prop.rejected %}
+                            <form action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
+                                <input type="hidden" name="prop" value="{{ url }}">
+                                <input type="hidden" name="list_id" value="{{ loop.index }}">
+                                <input class="reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                            </form>
+                        {% endif %}
+
+                        <form action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
+                            <input type="hidden" name="prop" value="{{ url }}">
+                            <input type="hidden" name="list_id" value="{{ loop.index }}">
+                            <input class="rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
