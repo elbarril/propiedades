@@ -1,0 +1,13 @@
+{
+    "locations": [
+        "25",
+        "30"
+    ],
+    "min_meters": "60",
+    "max_value": "700000",
+    "ambs": {
+        "zonaprop": ["9","14"],
+        "argenprop": ["2","3"]
+    },
+    "dolar": false
+}
