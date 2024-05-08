@@ -25,11 +25,37 @@ def perform_request(name, source, update_field, extra_path=""):
     return redirect("/")
 
 app = Flask(__name__)
+@app.route('/new', methods=["GET", "POST"])
+def new():
+    locations = p.get_locations()
+    ambs = p.get_ambs()
+    if request.method == 'POST':
+        locations_selected = request.form.getlist("locations")
+        ambs_zonaprop = request.form.getlist("amb-zonaprop")
+        ambs_argenprop = request.form.getlist("amb-argenprop")
+        ambs_selected = {
+            "zonaprop": ambs_zonaprop,
+            "argenprop": ambs_argenprop
+        }
+        name = request.form.get("name", "")
+        meters = request.form.get("meters", "")
+        price = request.form.get("price", "")
+        dolar = request.form.get("dolar", "")
+
+        p.save_search(name, locations_selected, price, meters, ambs_selected, dolar)
+
+        return redirect("/")
+
+    return render_template('new.html', locations=locations, ambs=ambs)
+
+
 @app.route('/')
 def home():
-    names = p.get_entities_names()
+    entities = p.get_search_entities()
     sources = p.get_source_names()
-    return render_template('index.html', names=names, sources=sources)
+    location_names = p.get_locations()
+    amb_names = p.get_ambs()
+    return render_template('index.html', entities=entities, sources=sources, location_names=location_names, amb_names=amb_names)
 
 @app.route('/<name>/<source>')
 def list(name, source):
@@ -47,7 +73,8 @@ def search(name, source):
     file = p.get_file_path(source, name)
     min_meters = entity["min_meters"]
     max_value = entity["max_value"]
-    p.search_props(locations, ambs, file, min_meters, max_value, source)
+    dolar = entity["dolar"]
+    p.search_props(locations, ambs, file, min_meters, max_value, dolar, source)
     return redirect("/" + name + "/" + source)
 
 @app.route('/<name>/<source>/comment', methods=["POST"])

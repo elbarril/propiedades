@@ -89,7 +89,7 @@ nav > a {
     text-decoration: none;
     text-transform: uppercase;
     padding: 10px 20px;
-    max-width: 30%;
+    max-width: 50%;
     word-break: break-all;
 }
 
@@ -233,4 +233,13 @@ strong {
 
 img {
     width: 100%;
+}
+
+.form-new {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 400px;
+    margin: 0 auto;
+    font-size: 18px;
 }

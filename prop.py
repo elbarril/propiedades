@@ -21,16 +21,34 @@ def get_search_entities():
             search_entities.setdefault(filename, json_data)
     return search_entities
 
-SEARCH_ENTITIES = get_search_entities()
+def save_search(name:str, locations, price, meters, ambs, dolar):
+    try:
+        entity = {
+            "locations": locations,
+            "min_meters": meters,
+            "max_value": price,
+            "ambs": ambs,
+            "dolar": True if dolar else False
+        }
+        with open(JSON_PATH + "search/" + name.replace(" ", "") + ".json", "w", encoding='utf-8') as f:
+            json.dump(entity, f)
+    except Exception as e:
+        print(e)
+
+def get_locations():
+    return LOCATIONS
+
+def get_ambs():
+    return AMBS
 
 def get_source_names():
     return SOURCES.keys()
 
 def get_entities_names():
-    return SEARCH_ENTITIES.keys()
+    return get_search_entities().keys()
 
 def get_entity(name):
-    return SEARCH_ENTITIES[name]
+    return get_search_entities()[name]
 
 def get_source(name):
     return SOURCES[name]
@@ -139,10 +157,18 @@ def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, id_attr, prop
 def get_today():
     return time.strftime("%d-%m-%Y") + "\n"
 
-def get_prop_price(prop_content):
+def get_prop_price(prop_content, dolar):
         price = 0
-        price_match = re.search(r'\$.([0-9]{3})\.([0-9]{3})(?!.Expensas)', prop_content)
-        if price_match: price = int(price_match.groups()[0] + price_match.groups()[1])
+        if dolar:
+            regex = r'USD.([0-9]{3})'
+        else:
+            regex = r'\$.([0-9]{3})\.([0-9]{3})(?!.Expensas)'
+        price_match = re.search(regex, prop_content)
+        if price_match: 
+            if dolar:
+                price = int(price_match.groups()[0])
+            else:
+                price = int(price_match.groups()[0] + price_match.groups()[1])
         return price
 
 def get_prop_meters(prop_content):
@@ -151,7 +177,7 @@ def get_prop_meters(prop_content):
         if meters_match: meters = int(meters_match.groups()[0])
         return meters
 
-def search_props(locations, ambs, file, min_meters, max_value, source):
+def search_props(locations, ambs, file, min_meters, max_value, dolar, source):
     web_options = get_source(source)
     date = get_today()
     url = get_url(locations, ambs, source)
@@ -173,11 +199,12 @@ def search_props(locations, ambs, file, min_meters, max_value, source):
             path = new_prop["path"]
             if not path: continue
             content = new_prop["content"]
-            if "USD" in content: continue
+            if not dolar and "USD" in content: continue
+            if dolar and not "USD" in content: continue
             path = path if "http" in path else base[:-1] + path
             meters = get_prop_meters(content)
-            price = get_prop_price(content)
-            if meters < min_meters or price > max_value: continue
+            price = get_prop_price(content, dolar)
+            if int(meters) < int(min_meters) or int(price) > int(max_value): continue
             
             id = new_prop["id"]
             data = new_prop["data"]
