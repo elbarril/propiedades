@@ -48,15 +48,6 @@ def new():
 
     return render_template('new.html', locations=locations, ambs=ambs)
 
-
-@app.route('/')
-def home():
-    entities = p.get_search_entities()
-    sources = p.get_source_names()
-    location_names = p.get_locations()
-    amb_names = p.get_ambs()
-    return render_template('index.html', entities=entities, sources=sources, location_names=location_names, amb_names=amb_names)
-
 @app.route('/<name>/<source>/rejected')
 def list_rejected(name, source):
     return get_list_template(name, source, sort="date", if_yes="rejected")
@@ -98,6 +89,14 @@ if __name__ == '__main__':
     def list(name, source):
         return get_list_template(name, source, can_search=True, sort="date", if_not="rejected")
 
+    @app.route('/')
+    def home():
+        entities = p.get_search_entities()
+        sources = p.get_source_names()
+        location_names = p.get_locations()
+        amb_names = p.get_ambs()
+        return render_template('index.html', entities=entities, sources=sources, location_names=location_names, amb_names=amb_names, can_create=True)
+
     if DEBUG:
         app.run(debug=True)
     else:
@@ -107,3 +106,11 @@ else:
     @app.route('/<name>/<source>')
     def list(name, source):
         return get_list_template(name, source, can_search=False, sort="date", if_not="rejected")
+
+    @app.route('/')
+    def home():
+        entities = p.get_search_entities()
+        sources = p.get_source_names()
+        location_names = p.get_locations()
+        amb_names = p.get_ambs()
+        return render_template('index.html', entities=entities, sources=sources, location_names=location_names, amb_names=amb_names, can_create=False)

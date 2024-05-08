@@ -12,7 +12,9 @@
 <body>
     <header>
         <h1>PROPIEDADES</h1>
-        <a href="/new">Crear busqueda</a>
+        {% if can_create %}
+            <a href="/new">Crear busqueda</a>
+        {% endif %}
 
         {% for name,entity in entities.items() %}
             <div id="{{ name }}">
