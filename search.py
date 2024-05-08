@@ -1,4 +1,4 @@
-JSON_PATH = "./static/json/"
+JSON_PATH = "/home/emidesouches/propiedades/static/json"
 
 LOCATIONS = {
     "0": "agronomia",
