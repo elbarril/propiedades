@@ -2,7 +2,7 @@ const searchButtonSelector = ".searchButton";
 const commentButtonSelector = ".commentButton";
 const reviseButtonSelector = ".reviseButton";
 const rejectButtonSelector = ".rejectButton";
-const liveSearchButtonSelector = "input[name='keywords']"
+const liveSearchButtonSelector = "input[name='keywords']";
 
 function timer(seconds, element) {
     element.innerText = "Tiempo aproximado: " + seconds + " segundos.";
@@ -73,8 +73,6 @@ function addliveSearchButtonEvent(button){
             let match = false;
 
             words.forEach(word => {
-                console.log(word);
-                console.log(item.innerText);
                 if (item.innerText.toLowerCase().includes(word.toLowerCase())){
                     match = true;
                 }
@@ -102,7 +100,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
     var rejectButton = document.querySelectorAll(rejectButtonSelector);
     rejectButton.length && rejectButton.forEach(b => addRejectButtonEvent(b));
 
-    
     var liveSearchButton = document.querySelectorAll(liveSearchButtonSelector);
     liveSearchButton.length && liveSearchButton.forEach(b => addliveSearchButtonEvent(b));
 });
