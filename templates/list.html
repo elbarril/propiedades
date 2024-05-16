@@ -2,11 +2,6 @@
 
 {% block header %}
     <p>
-        <span>
-            <a href="/#{{ name }}">back</a>
-        </span>
-    </p>
-    <p>
         {% for location in locations %}
             <span>{{ location|replace("-", " ")|title }},</span>
         {% endfor %}
