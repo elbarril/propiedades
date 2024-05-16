@@ -8,10 +8,13 @@ def get_list_template(name, source, can_search, **options):
     entity = p.get_entity(name)
     locations = p.get_location_names(entity["locations"])
     ambs = p.get_amb_names(entity["ambs"], source)
+    price = entity["max_value"]
+    meters = entity["min_meters"]
+    dolar = entity["dolar"]
     file = p.get_file_path(source, name)
     url = p.get_url(locations, ambs, source)
     props = p.load_props(file, **options)
-    return render_template('list.html', source=source, props=props, props_url=url, locations=locations, ambs=ambs, name=name, can_search=can_search)
+    return render_template('list.html', source=source, props=props, props_url=url, locations=locations, ambs=ambs, price=price, meters=meters, dolar=dolar, name=name, can_search=can_search)
 
 def perform_request(name, source, update_field, extra_path=""):
     if request.method == 'POST':
@@ -47,10 +50,6 @@ def new():
         return redirect("/")
 
     return render_template('new.html', locations=locations, ambs=ambs)
-
-@app.route('/<name>/<source>/rejected')
-def list_rejected(name, source):
-    return get_list_template(name, source, sort="date", if_yes="rejected")
 
 @app.route('/<name>/<source>/search')
 def search(name, source):
@@ -89,6 +88,10 @@ if __name__ == '__main__':
     def list(name, source):
         return get_list_template(name, source, can_search=True, sort="date", if_not="rejected")
 
+    @app.route('/<name>/<source>/rejected')
+    def list_rejected(name, source):
+        return get_list_template(name, source, can_search=True, sort="date", if_yes="rejected")
+
     @app.route('/')
     def home():
         entities = p.get_search_entities()
@@ -106,6 +109,10 @@ else:
     @app.route('/<name>/<source>')
     def list(name, source):
         return get_list_template(name, source, can_search=False, sort="date", if_not="rejected")
+
+    @app.route('/<name>/<source>/rejected')
+    def list_rejected(name, source):
+        return get_list_template(name, source, can_search=False, sort="date", if_yes="rejected")
 
     @app.route('/')
     def home():

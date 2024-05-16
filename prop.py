@@ -12,11 +12,11 @@ import json
 from os import walk
 
 def get_search_entities():
-    search_files = next(walk(JSON_PATH + "search/"), (None, None, []))[2]  # [] if no file
+    search_files = next(walk(JSON_PATH.joinpath("search/")), (None, None, []))[2]  # [] if no file
     search_entities:dict[str, dict] = {}
     for search_file in search_files:
         filename, extension = tuple(search_file.split("."))
-        with open(JSON_PATH + "search/" + search_file, "r", encoding="utf-8") as file:
+        with open(JSON_PATH.joinpath("search/").joinpath(search_file), "r", encoding="utf-8") as file:
             json_data = json.load(file)
             search_entities.setdefault(filename, json_data)
     return search_entities
@@ -30,7 +30,7 @@ def save_search(name:str, locations, price, meters, ambs, dolar):
             "ambs": ambs,
             "dolar": True if dolar else False
         }
-        with open(JSON_PATH + "search/" + name.replace(" ", "") + ".json", "w", encoding='utf-8') as f:
+        with open(JSON_PATH.joinpath("search/").joinpath(name.replace(" ", "") + ".json"), "w", encoding='utf-8') as f:
             json.dump(entity, f)
     except Exception as e:
         print(e)
@@ -60,7 +60,7 @@ def get_amb_names(amb_keys, source):
     return [AMBS[source][amb] for amb in amb_keys[source]]
 
 def get_file_path(source, name):
-    return  JSON_PATH + source + "_" + name + ".json"
+    return  JSON_PATH.joinpath(source + "_" + name + ".json")
 
 def get_url(location_list, amb_list, source):
     web_options = get_source(source)

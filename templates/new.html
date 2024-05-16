@@ -1,49 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva busqueda</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <header>
+{% extends "layout.html" %}
 
-    </header>
-
-    <main>
-        <form class="form-new" action="/new" method="post">
-            <label for="name">Nombre</label>
-            <input type="text" name="name" id="name" required>
-            <label for="locations">Barrios</label>
-            <select name="locations" id="locations" multiple required>
-                {% for id,location in locations.items() %}
+{% block main %}
+    <form class="form-new" action="/new" method="post">
+        <label for="name">Nombre</label>
+        <input type="text" name="name" id="name" required>
+        <label for="locations">Barrios</label>
+        <select name="locations" id="locations" multiple required>
+            {% for id,location in locations.items() %}
+                <option value="{{ id }}">
+                    {{ location|replace("-", " ")|title }}
+                </option>
+            {% endfor %}
+        </select>
+        <p>Ambientes:</p>
+        {% for source,ambs_dict in ambs.items() %}
+            <label for="amb-{{source}}">{{source}}</label>
+            <select name="amb-{{source}}" id="amb-{{source}}" multiple required>
+                {% for id,amb in ambs_dict.items() %}
                     <option value="{{ id }}">
-                        {{ location|replace("-", " ")|title }}
+                        {{amb|replace("-", " ")|title}}
                     </option>
                 {% endfor %}
             </select>
-            <p>Ambientes:</p>
-            {% for source,ambs_dict in ambs.items() %}
-                <label for="amb-{{source}}">{{source}}</label>
-                <select name="amb-{{source}}" id="amb-{{source}}" multiple required>
-                    {% for id,amb in ambs_dict.items() %}
-                        <option value="{{ id }}">
-                            {{amb|replace("-", " ")|title}}
-                        </option>
-                    {% endfor %}
-                </select>
-            {% endfor %}
-            <label for="meters">Metros minimos</label>
-            <input type="number" name="meters" id="meters" required>
-            <label for="price">Valor maximo</label>
-            <input type="number" name="price" id="price" required>
-            <label for="dolar">En dolares?</label>
-            <input type="checkbox" name="dolar" id="dolar">
+        {% endfor %}
+        <label for="meters">Metros minimos</label>
+        <input type="number" name="meters" id="meters" required>
+        <label for="price">Valor maximo</label>
+        <input type="number" name="price" id="price" required>
+        <label for="dolar">En dolares?</label>
+        <input type="checkbox" name="dolar" id="dolar">
 
-            <input type="submit" value="Crear">
-        </form>
-    </main>
-</body>
-</html>
+        <input type="submit" value="Crear">
+    </form>
+{% endblock main %}

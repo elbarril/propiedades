@@ -1,42 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROPIEDADES</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
+{% block header %}
+    <h1>PROPIEDADES</h1>
+    {% if can_create %}
+        <a href="/new">Crear busqueda</a>
+    {% endif %}
 
-<body>
-    <header>
-        <h1>PROPIEDADES</h1>
-        {% if can_create %}
-            <a href="/new">Crear busqueda</a>
-        {% endif %}
-
-        {% for name,entity in entities.items() %}
-            <div id="{{ name }}">
-                <nav style="flex-direction: column;">
-                    <h2>{{ name|title }}</h2>
+    {% for name,entity in entities.items() %}
+        <div id="{{ name }}">
+            <nav style="flex-direction: column;">
+                <h2>{{ name|title }}</h2>
+                <ul>
+                    {% for location in entity.locations %}
+                        {{ location_names[location]|replace("-", "")|title }}
+                    {% endfor %}
+                </ul>
+                {% for source in sources %}
+                    <a href="/{{ name }}/{{ source }}">{{ source|title }}</a>
                     <ul>
-                        {% for location in entity.locations %}
-                            {{ location_names[location]|replace("-", "")|title }}
+                        {% for amb in entity.ambs[source] %}
+                            {{ amb_names[source][amb]|replace("-", "")|title }}
                         {% endfor %}
                     </ul>
-                    {% for source in sources %}
-                        <a href="/{{ name }}/{{ source }}">{{ source|title }}</a>
-                        <ul>
-                            {% for amb in entity.ambs[source] %}
-                                {{ amb_names[source][amb]|replace("-", "")|title }}
-                            {% endfor %}
-                        </ul>
-                    {% endfor %}
-                </nav>
-            </div>
-            <hr>
-        {% endfor %}
-    </header>
-</body>
-</html>
+                {% endfor %}
+            </nav>
+        </div>
+        <hr>
+    {% endfor %}
+{% endblock header %}
