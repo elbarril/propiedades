@@ -1,35 +1,50 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <form class="form-new" action="/new" method="post">
-        <label for="name">Nombre</label>
-        <input type="text" name="name" id="name" required>
-        <label for="locations">Barrios</label>
-        <select name="locations" id="locations" multiple required>
-            {% for id,location in locations.items() %}
-                <option value="{{ id }}">
-                    {{ location|replace("-", " ")|title }}
-                </option>
-            {% endfor %}
-        </select>
-        <p>Ambientes:</p>
-        {% for source,ambs_dict in ambs.items() %}
-            <label for="amb-{{source}}">{{source}}</label>
-            <select name="amb-{{source}}" id="amb-{{source}}" multiple required>
-                {% for id,amb in ambs_dict.items() %}
-                    <option value="{{ id }}">
-                        {{amb|replace("-", " ")|title}}
-                    </option>
-                {% endfor %}
-            </select>
-        {% endfor %}
-        <label for="meters">Metros minimos</label>
-        <input type="number" name="meters" id="meters" required>
-        <label for="price">Valor maximo</label>
-        <input type="number" name="price" id="price" required>
-        <label for="dolar">En dolares?</label>
-        <input type="checkbox" name="dolar" id="dolar">
+    <form class="form" action="/new" method="post">
+        <fieldset>
+            <legend>Crear búsqueda de compra-venta</legend>
 
-        <input type="submit" value="Crear">
+            <div class="formField">
+                <label for="name">Nombre</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            
+            <div class="formField">
+                <label for="locations">Barrios</label>
+                <select name="locations" id="locations" multiple required>
+                    {% for id,location in locations.items() %}
+                        <option value="{{ id }}">
+                            {{ location|replace("-", " ")|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% for source,ambs_dict in ambs.items() %}
+                <div class="formField">
+                    <label for="amb-{{source}}">Ambientes en {{source}}</label>
+                    <select name="amb-{{source}}" id="amb-{{source}}" multiple required>
+                        {% for id,amb in ambs_dict.items() %}
+                            <option value="{{ id }}">
+                                {{amb|replace("-", " ")|title}}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+
+            <div class="formField">
+                <label for="meters">Metros minimos</label>
+                <input type="number" name="meters" id="meters" required>
+            </div>
+
+            <div class="formField">
+                <label for="price">Valor maximo</label>
+                <input type="number" name="price" id="price" required>
+            </div>
+
+            <input class="button" type="submit" value="Crear">
+        </fieldset>
     </form>
 {% endblock main %}

@@ -1,30 +1,35 @@
 {% extends "layout.html" %}
 
-{% block header %}
-    <h1>PROPIEDADES</h1>
+{% block header_content %}
     {% if can_create %}
-        <a href="/new">Crear busqueda</a>
+        <a class="link" href="/new">Crear busqueda</a>
     {% endif %}
+{% endblock header_content %}
 
-    {% for name,entity in entities.items() %}
-        <div id="{{ name }}">
-            <nav style="flex-direction: column;">
-                <h2>{{ name|title }}</h2>
-                <ul>
-                    {% for location in entity.locations %}
-                        {{ location_names[location]|replace("-", "")|title }}
-                    {% endfor %}
-                </ul>
-                {% for source in sources %}
-                    <a href="/{{ name }}/{{ source }}">{{ source|title }}</a>
-                    <ul>
-                        {% for amb in entity.ambs[source] %}
-                            {{ amb_names[source][amb]|replace("-", "")|title }}
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
-            </nav>
+{% block main %}
+    <div class="searchList">
+        <h2>Lista de Busquedas</h2>
+        
+        <div class="cards">
+            {% for name,entity in entities.items() %}
+                <div class="card" id="{{ name }}">
+                    <div class="card-content">
+                        <h2>{{ name|title }}</h2>
+
+                        <ul>
+                            {% for location in entity.locations %}
+                                {{ location_names[location]|replace("-", " ")|title }},
+                            {% endfor %}
+                        </ul>
+
+                        <div class="buttons">
+                            {% for source in sources %}
+                                <a class="button" href="/{{ name }}/{{ source }}">{{ source|title }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        <hr>
-    {% endfor %}
-{% endblock header %}
+    </div>
+{% endblock main %}

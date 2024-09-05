@@ -1,50 +1,15 @@
 {% extends "layout.html" %}
 
-{% block header %}
-    <p>
-        {% for location in locations %}
-            <span>{{ location|replace("-", " ")|title }},</span>
-        {% endfor %}
-    </p>
-    <p>
-        {% for amb in ambs %}
-            <span>{{ amb|replace("-", " ")|title }},</span>
-        {% endfor %}
-    </p>
-    <p>
-        Dolar: {{ "Si" if dolar else "No" }}
-    </p>
-    <p>
-        Metros minimo: {{ meters }}
-    </p>
-    <p>
-        Maximo precio alquiler: {{ price }}
-    </p>
-    <a href="{{ props_url }}" target="_blank">
-        <h1>{{ name }} - {{ source }}: <span id="amount">{{ props|length }}</span></h1>
-    </a>
-
-    <nav>
-        <a href="/{{ name }}/{{ source }}">Propiedades</a>
-        {% if can_search %}
-            <a class="searchButton" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
-        {% endif %}
-        <a href="/{{ name }}/{{ source }}/rejected">Rechazados</a>
-    </nav>
-
-    <nav>
-        Buscar
-        <input type="text" name="keywords">
-    </nav>
-{% endblock header %}
-
 {% block main %}
-    <ul id="props">
+    {% include "list/search_details.html" %}
+    {% include "list/search_banner.html" %}
+    
+    <ul id="props" class="cards list">
         {% for url,prop in props.items() %}
-            <li id="{{  loop.index  }}" class="{% if prop.revised %}revised{% endif %} item">
-                <div class="prop-header">
+            <li class="card list-item {% if prop.revised %}revised{% endif %} item" id="{{  loop.index  }}">
+                <div class="list-item-header">
                     {% if prop.title %}
-                        <span>{{ prop.title }}</span>
+                        <span>{{ prop.title[:60] }}...</span>
                     {% elif prop.id %}
                         <span>{{ prop.id }}</span>
                     {% else %}
@@ -52,20 +17,14 @@
                         <span class="index">{{ prop.index }}</span>
                     {% endif %}
                 </div>
-                {% if prop.comment %}
-                    <div class="prop-comment">
-                        <h2>COMENTARIO</h2>
-                        {{ prop.comment }}
-                    </div>
-                {% endif %}
 
-                <div class="prop-content">
+                <div class="list-item-content">
                     {% if prop.image %}
                         <img src="{{ prop.image }}" alt="{{ prop.title }}">
                     {% endif %}
 
                     {% if prop.data %}
-                        <ul>
+                        <ul class="list-item-content-data">
                             {% for key, value in prop.data.items() %}
                                 <li><strong>{{ key }}:</strong>{{ value }}</li>
                             {% endfor %}
@@ -74,29 +33,29 @@
                         {{ prop.content }}
                     {% endif %}
                     
-                    <form action="/{{ name }}/{{ source }}/comment" method="post">
-                        <textarea name="comment" rows="5" cols="41" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
+                    <form class="form comments" action="/{{ name }}/{{ source }}/comment" method="post">
+                        <textarea name="comment" rows="3" cols="1" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
                         <input type="hidden" name="prop" value="{{ url }}">
                         <input type="hidden" name="list_id" value="{{ loop.index }}">
-                        <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;">
+                        <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;" hidden>
                     </form>
                 </div>
 
-                <a href="{{ url }}" target="_blank">Abrir</a>
+                <a class="button" href="{{ url }}" target="_blank">Abrir</a>
 
-                <div class="forms">
+                <div class="list-item-actions">
                     {% if not prop.rejected %}
-                        <form action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
+                        <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
                             <input type="hidden" name="prop" value="{{ url }}">
                             <input type="hidden" name="list_id" value="{{ loop.index }}">
-                            <input class="reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                            <input class="button reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
                         </form>
                     {% endif %}
 
-                    <form action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
+                    <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
                         <input type="hidden" name="prop" value="{{ url }}">
                         <input type="hidden" name="list_id" value="{{ loop.index }}">
-                        <input class="rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                        <input class="button rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
                     </form>
                 </div>
             </li>

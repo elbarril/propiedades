@@ -1,0 +1,15 @@
+<div class="banner">
+    <div class="tabs">
+        <a class="button {% if not request.endpoint == 'list_rejected' %}active{% endif %}"  href="/{{ name }}/{{ source }}">Propiedades</a>
+        <a class="button {% if request.endpoint == 'list_rejected' %}active{% endif %}"  href="/{{ name }}/{{ source }}/rejected" >Rechazados</a>
+
+        {% if can_search %}
+            <a class="searchButton button" href="/{{ name }}/{{ source }}/search" data-seconds="{{ locations|length // 2 * 14 }}">Buscar</a>
+        {% endif %}
+    </div>
+
+    <div class="filter">
+        <strong>Filtrar</strong>
+        <input type="text" name="keywords">
+    </div>
+</div>

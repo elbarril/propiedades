@@ -1,8 +1,6 @@
 import pathlib
 JSON_PATH = pathlib.Path(__file__).parent.resolve().joinpath("static/json/")
 
-print(JSON_PATH)
-
 LOCATIONS = {
     "0": "agronomia",
     "1": "almagro",
@@ -110,7 +108,6 @@ ZONAPROP = {
 
 ARGENPROP = {
     "base_url": "https://www.argenprop.com/",
-    "prop_types": "casas-o-departamentos-o-ph/alquiler",
     "prop_types": ["casas", "departamentos", "ph"],
     "prop_types_suffix": "/alquiler",
     "url_join": "-o-",

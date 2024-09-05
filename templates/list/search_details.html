@@ -1,0 +1,40 @@
+<div class="details">
+    <a class="link" href="{{ props_url }}" target="_blank">
+        <h2>
+            <span>{{ name }} - {{ source }}: </span>
+            <span id="amount">{{ props|length }}</span>
+            {% if request.endpoint=='list_rejected' %}
+                <span> (rechazadas)</span>
+            {% endif %}
+        </h2>
+    </a>
+
+    <p>
+        <strong>Barrios: </strong>
+        {% for location in locations %}
+            <span>{{ location|replace("-", " ")|title }}, </span>
+        {% endfor %}
+    </p>
+
+    <p>
+        <strong>Ambientes: </strong>
+        {% for amb in ambs %}
+            <span>{{ amb|replace("-", " ")|title }}, </span>
+        {% endfor %}
+    </p>
+
+    <p>
+        <strong>Dolar: </strong>
+        <span>{{ "Si" if dolar else "No" }}</span>
+    </p>
+
+    <p>
+        <strong>Metros minimo: </strong>
+        <span>{{ meters }}</span>
+    </p>
+
+    <p>
+        <strong> Maximo precio alquiler: </strong>
+        <span>{{ price }}</span>
+    </p>
+</div>

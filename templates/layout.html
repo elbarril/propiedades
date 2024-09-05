@@ -1,28 +1,35 @@
 <!DOCTYPE html>
+
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if name and source %}
-        <title>{{ name }} - {{ source }}</title>
-    {% else %}
-        <title>PROPIEDADES</title>
-    {% endif %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
+        {% if name and source %}
+            <title>{{ name }} - {{ source }}</title>
+        {% else %}
+            <title>PROPIEDADES</title>
+        {% endif %}
 
-<body>
-    <header>
-        <a href="/">HOME</a>
-        {% block header %}{% endblock header %}
-    </header>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/library.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <main>
-        {% block main %}{% endblock main %}
-    </main>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    </head>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+    <body>
+        <header>
+            <h1>Busqueda de Propiedades</h1>
+
+            {% block header_content %}{% endblock header_content %}
+
+            <a class="link" href="/">Volver al inicio</a>
+        </header>
+
+        <main>
+            {% block main %}{% endblock main %}
+        </main>
+
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
 </html>
