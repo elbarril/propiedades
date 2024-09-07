@@ -13,35 +13,51 @@
             <div class="formField">
                 <label for="locations">Barrios</label>
                 <select name="locations" id="locations" multiple required>
-                    {% for id,location in locations.items() %}
-                        <option value="{{ id }}">
+                    {% for location in search.locations %}
+                        <option value="{{ loop.index - 1 }}">
                             {{ location|replace("-", " ")|title }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
 
-            {% for source,ambs_dict in ambs.items() %}
-                <div class="formField">
-                    <label for="amb-{{source}}">Ambientes en {{source}}</label>
-                    <select name="amb-{{source}}" id="amb-{{source}}" multiple required>
-                        {% for id,amb in ambs_dict.items() %}
-                            <option value="{{ id }}">
-                                {{amb|replace("-", " ")|title}}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% endfor %}
+            <div class="formField">
+                <label for="ambs">Ambientes</label>
+                <select name="ambs" id="ambs" required>
+                    {% for amb in search.ambs %}
+                        <option value="{{ loop.index - 1 }}">
+                            {{ amb|replace("-", " ")|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="formField">
+                <label for="rooms">Habitaciones</label>
+                <select name="rooms" id="rooms" required>
+                    {% for room in search.rooms %}
+                    
+                        <option value="{{ loop.index - 1 }}">
+                            {{ room|replace("-", " ")|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
             <div class="formField">
                 <label for="meters">Metros minimos</label>
-                <input type="number" name="meters" id="meters" required>
+                <input type="number" step="10" min="10" value="10" name="meters" id="meters" required>
             </div>
 
             <div class="formField">
                 <label for="price">Valor maximo</label>
-                <input type="number" name="price" id="price" required>
+                <select name="price" id="price" required>
+                    {% for price in search.prices %}
+                        <option value="{{ loop.index - 1 }}">
+                            {{ price|replace("-", " ")|title }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
             <input class="button" type="submit" value="Crear">

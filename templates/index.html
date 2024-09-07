@@ -9,21 +9,28 @@
 {% block main %}
     <div class="searchList">
         <h2>Lista de Busquedas</h2>
-        
+
         <div class="cards">
             {% for name,entity in entities.items() %}
                 <div class="card" id="{{ name }}">
                     <div class="card-content">
                         <h2>{{ name|title }}</h2>
 
-                        <ul>
+                        <ul class="list list-scroll">
                             {% for location in entity.locations %}
-                                {{ location_names[location]|replace("-", " ")|title }},
+                               <li class="list-item">{{ search.locations[location|int]|replace("-", " ")|title }},</li>
                             {% endfor %}
                         </ul>
 
+                        <ul class="list">
+                            <li class="list-item list-item-flex"><strong>Ambientes: </strong>{{ search.ambs[entity.ambs|int] }}</li>
+                            <li class="list-item list-item-flex"><strong>Habitaciones: </strong>{{ search.rooms[entity.rooms|int] }}</li>
+                            <li class="list-item list-item-flex"><strong>Valor: </strong>U$D {{ search.prices[entity.price|int] }}</li>
+                            <li class="list-item list-item-flex"><strong>Tamaño: </strong>{{ entity.meters }} m&#xB2;</li>
+                        </ul>
+
                         <div class="buttons">
-                            {% for source in sources %}
+                            {% for source in search.sources.keys() %}
                                 <a class="button" href="/{{ name }}/{{ source }}">{{ source|title }}</a>
                             {% endfor %}
                         </div>

@@ -3,7 +3,7 @@
         <h2>
             <span>{{ name }} - {{ source }}: </span>
             <span id="amount">{{ props|length }}</span>
-            {% if request.endpoint=='list_rejected' %}
+            {% if request.endpoint == 'list_rejected' %}
                 <span> (rechazadas)</span>
             {% endif %}
         </h2>
@@ -11,30 +11,28 @@
 
     <p>
         <strong>Barrios: </strong>
-        {% for location in locations %}
-            <span>{{ location|replace("-", " ")|title }}, </span>
+        {% for location in entity.locations %}
+            <span>{{ search.locations[location|int]|replace("-", " ")|title }}, </span>
         {% endfor %}
     </p>
 
     <p>
         <strong>Ambientes: </strong>
-        {% for amb in ambs %}
-            <span>{{ amb|replace("-", " ")|title }}, </span>
-        {% endfor %}
+        <span>{{ search.ambs[entity.ambs|int]|replace("-", " ")|title }}</span>
     </p>
 
     <p>
-        <strong>Dolar: </strong>
-        <span>{{ "Si" if dolar else "No" }}</span>
+        <strong>Habitaciones: </strong>
+        <span>{{ search.rooms[entity.rooms|int]|replace("-", " ")|title }}</span>
     </p>
 
     <p>
-        <strong>Metros minimo: </strong>
-        <span>{{ meters }}</span>
+        <strong>Tamaño: </strong>
+        <span>{{ entity.meters }}  m&#xB2;</span>
     </p>
 
     <p>
-        <strong> Maximo precio alquiler: </strong>
-        <span>{{ price }}</span>
+        <strong>Valor máximo: </strong>
+        <span>U$D {{ search.prices[entity.price|int] }}</span>
     </p>
 </div>

@@ -7,56 +7,60 @@
     <ul id="props" class="cards list">
         {% for url,prop in props.items() %}
             <li class="card list-item {% if prop.revised %}revised{% endif %} item" id="{{  loop.index  }}">
-                <div class="list-item-header">
-                    {% if prop.title %}
-                        <span>{{ prop.title[:60] }}...</span>
-                    {% elif prop.id %}
-                        <span>{{ prop.id }}</span>
-                    {% else %}
-                        <span class="date">{{ prop.date }}</span>
-                        <span class="index">{{ prop.index }}</span>
-                    {% endif %}
-                </div>
+                <div class="card-content">
+                    <div class="list-item-header">
+                        {% if prop.title %}
+                            <span>{{ prop.title[:60] }}...</span>
+                        {% elif prop.id %}
+                            <span>{{ prop.id }}</span>
+                        {% else %}
+                            <span class="date">{{ prop.date }}</span>
+                            <span class="index">{{ prop.index }}</span>
+                        {% endif %}
+                    </div>
 
-                <div class="list-item-content">
-                    {% if prop.image %}
-                        <img src="{{ prop.image }}" alt="{{ prop.title }}">
-                    {% endif %}
+                    <div class="list-item-content">
+                        {% if prop.image %}
+                            <img src="{{ prop.image }}" alt="{{ prop.title }}">
+                        {% endif %}
 
-                    {% if prop.data %}
-                        <ul class="list-item-content-data">
-                            {% for key, value in prop.data.items() %}
-                                <li><strong>{{ key }}:</strong>{{ value }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        {{ prop.content }}
-                    {% endif %}
-                    
-                    <form class="form comments" action="/{{ name }}/{{ source }}/comment" method="post">
-                        <textarea name="comment" rows="3" cols="1" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
-                        <input type="hidden" name="prop" value="{{ url }}">
-                        <input type="hidden" name="list_id" value="{{ loop.index }}">
-                        <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;" hidden>
-                    </form>
-                </div>
-
-                <a class="button" href="{{ url }}" target="_blank">Abrir</a>
-
-                <div class="list-item-actions">
-                    {% if not prop.rejected %}
-                        <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
+                        {% if prop.data %}
+                            <ul class="list-item-content-data">
+                                {% for key, value in prop.data.items() %}
+                                    <li><strong>{{ key }}:</strong>{{ value }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ prop.content }}
+                        {% endif %}
+                        
+                        <form class="form comments" action="/{{ name }}/{{ source }}/comment" method="post">
+                            <textarea name="comment" rows="3" cols="1" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
                             <input type="hidden" name="prop" value="{{ url }}">
                             <input type="hidden" name="list_id" value="{{ loop.index }}">
-                            <input class="button reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                            <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;" hidden>
                         </form>
-                    {% endif %}
+                    </div>
+                    
+                    <div class="buttons">
+                        <a class="button" href="{{ url }}" target="_blank">Abrir</a>
 
-                    <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
-                        <input type="hidden" name="prop" value="{{ url }}">
-                        <input type="hidden" name="list_id" value="{{ loop.index }}">
-                        <input class="button rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
-                    </form>
+                        <div class="list-item-actions">
+                            {% if not prop.rejected %}
+                                <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
+                                    <input type="hidden" name="prop" value="{{ url }}">
+                                    <input type="hidden" name="list_id" value="{{ loop.index }}">
+                                    <input class="button reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                                </form>
+                            {% endif %}
+
+                            <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
+                                <input type="hidden" name="prop" value="{{ url }}">
+                                <input type="hidden" name="list_id" value="{{ loop.index }}">
+                                <input class="button rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </li>
         {% endfor %}

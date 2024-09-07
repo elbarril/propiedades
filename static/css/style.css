@@ -53,6 +53,8 @@ strong {
 
 img {
     width: 100%;
+    max-height: 300px;
+    object-fit: cover;
 }
 
 /* Links */
@@ -75,7 +77,8 @@ img {
     min-width: 400px;
     max-width: 440px;
     min-height: 220px;
-    margin: 10px 10px 0 0;
+    margin: 0 auto;
+    margin-bottom: calc(var(--spacer--large)*2);
     padding: var(--spacer--xl) calc(var(--spacer--large)*2);
     background-color: var(--color--white);
     box-shadow: var(--box--shadow);
@@ -84,7 +87,7 @@ img {
 
 .card-content {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: var(--spacer--medium);
     height: 100%;
     flex-direction: column;
@@ -106,6 +109,7 @@ img {
 
 .buttons {
     padding: var(--spacer--xl) 0;
+    margin-top: auto;
 }
 
 .button {
@@ -136,9 +140,19 @@ img {
     padding: var(--spacer--xl) calc(var(--spacer--large)*2);
 }
 
+.list-scroll {
+    overflow-y: auto;
+    max-height: 130px;
+}
+
 .list-item {
     list-style: none;
-    border: 2px solid blue;
+    width: 100%;
+}
+
+.list-item-flex {
+    display: flex;
+    justify-content: space-between;
 }
 
 .list-item.revised {
@@ -278,7 +292,6 @@ img {
 
 .form .formField select {
     padding: 4px 8px;
-    height: 100px;
 }
 
 .form .formField select option {
