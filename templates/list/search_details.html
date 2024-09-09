@@ -11,28 +11,28 @@
 
     <p>
         <strong>Barrios: </strong>
-        {% for location in entity.locations %}
-            <span>{{ search.locations[location|int]|replace("-", " ")|title }}, </span>
+        {% for location in search.locations %}
+            <span>{{ location }}, </span>
         {% endfor %}
     </p>
 
     <p>
         <strong>Ambientes: </strong>
-        <span>{{ search.ambs[entity.ambs|int]|replace("-", " ")|title }}</span>
+        <span>{{ search.ambs }}</span>
     </p>
 
     <p>
         <strong>Habitaciones: </strong>
-        <span>{{ search.rooms[entity.rooms|int]|replace("-", " ")|title }}</span>
+        <span>{{ search.rooms }}</span>
     </p>
 
     <p>
-        <strong>Tamaño: </strong>
-        <span>{{ entity.meters }}  m&#xB2;</span>
+        <strong>Tamaño mínimo: </strong>
+        <span>{{ search.meters }}  m&#xB2;</span>
     </p>
 
     <p>
         <strong>Valor máximo: </strong>
-        <span>U$D {{ search.prices[entity.price|int] }}</span>
+        <span>U$D {{ search.price }}</span>
     </p>
 </div>

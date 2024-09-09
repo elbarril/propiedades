@@ -1,4 +1,6 @@
 from pathlib import Path
+from os import walk
+import json
 
 PROJECT_PATH = Path(__file__).parent.resolve()
 JSON_PATH = PROJECT_PATH / "static/json/"
@@ -129,3 +131,84 @@ SEARCH = {
         }
     }
 }
+
+def get_sources() -> list:
+    return list(SEARCH["sources"].keys())
+
+def get_entities() -> dict:
+    search_entities:dict[str, dict] = {}
+    for search_file in next(walk(SEARCH_PATH), (None, None, []))[2]:
+        with open(SEARCH_PATH / search_file, "r", encoding="utf-8") as file:
+            search_entities.setdefault(search_file.split(".")[0], json.load(file))
+    return search_entities
+
+def save_search(name:str, entity:dict):
+    try:
+        file_name = name.replace(" ", "") + ".json"
+        with open(SEARCH_PATH / file_name, "w", encoding='utf-8') as f:
+            json.dump(entity, f)
+    except Exception as e:
+        print(e)
+
+def filter_props(props:dict, filter_key:str, filter_value) -> dict:
+    return {key: value for key, value in props.items() if value.get(filter_key) == filter_value}
+
+def load_props(source:str, name:str, filter_key=None, filter_value=True) -> dict:
+    file = get_file_path(source, name)
+    props = {}
+    try:
+        with open(file, "r") as f:
+            props:dict = json.load(f)
+    except Exception as e:
+        print(e)
+    else:
+        if filter_key is not None:
+            props = filter_props(props, filter_key, filter_value)
+    return props
+
+def save_props(source:str, name:str, props:dict):
+    file = get_file_path(source, name)
+    try:
+        with open(file, "w", encoding='utf-8') as f:
+            json.dump(props, f)
+    except Exception as e:
+        print(e)
+
+def update_prop(source:str, name:str, prop:str, update:dict):
+    props = load_props(source, name)
+    if prop in props:
+        props[prop].update(update)
+    save_props(source, name, props)
+
+def get_entity(name:str):
+    return get_entities().get(name)
+
+def get_file_path(source:str, name:str):
+    return  JSON_PATH / f"{source}_{name}.json"
+
+def get_base_url(source:str) -> str:
+    return SEARCH["sources"][source]["base_url"]
+
+def get_locations_join(source:str) -> str:
+    return SEARCH["sources"][source]["locations_join"]
+
+def get_locations_list(locations_ids:list) -> list:
+    return [SEARCH["locations"][int(location)] for location in locations_ids]
+
+def get_xpaths(source:str) -> dict:
+    return SEARCH["sources"][source]["xpaths"]
+
+def get_ambs(ambs_id:str) -> str:
+    return SEARCH["ambs"][int(ambs_id)]
+
+def get_ambs_format(source:str) -> str:
+    return SEARCH["sources"][source]["ambs_format"]
+
+def get_rooms(rooms_id:str) -> str:
+    return SEARCH["rooms"][int(rooms_id)]
+
+def get_rooms_format(source:str) -> str:
+    return SEARCH["sources"][source]["rooms_format"]
+
+def get_price(price_id:str) -> str:
+    return SEARCH["prices"][int(price_id)]

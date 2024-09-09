@@ -9,33 +9,20 @@
             <li class="card list-item {% if prop.revised %}revised{% endif %} item" id="{{  loop.index  }}">
                 <div class="card-content">
                     <div class="list-item-header">
-                        {% if prop.title %}
-                            <span>{{ prop.title[:60] }}...</span>
-                        {% elif prop.id %}
-                            <span>{{ prop.id }}</span>
-                        {% else %}
-                            <span class="date">{{ prop.date }}</span>
-                            <span class="index">{{ prop.index }}</span>
-                        {% endif %}
+                        <span>{{ prop.title[:80]|default("Sin título", true) }}{{ "..." if prop.title|length > 79 }}</span>
                     </div>
 
                     <div class="list-item-content">
-                        {% if prop.image %}
-                            <img src="{{ prop.image }}" alt="{{ prop.title }}">
-                        {% endif %}
+                        <img src="{{ prop.image|default(url_for('static', filename='images/property-img-default.gif'), true) }}" alt="{{ prop.title }}">
 
-                        {% if prop.data %}
-                            <ul class="list-item-content-data">
-                                {% for key, value in prop.data.items() %}
-                                    <li><strong>{{ key }}:</strong>{{ value }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            {{ prop.content }}
-                        {% endif %}
+                        <ul class="list-item-content-data">
+                            {% for key, value in prop.data.items() %}
+                                <li><strong>{{ key }}:</strong>{{ value }}</li>
+                            {% endfor %}
+                        </ul>
                         
                         <form class="form comments" action="/{{ name }}/{{ source }}/comment" method="post">
-                            <textarea name="comment" rows="3" cols="1" style="width: 100%;">{% if prop.comment %}{{ prop.comment }}{% endif %}</textarea>
+                            <textarea name="comment" rows="3" cols="1" style="width: 100%;">{{ prop.comment }}</textarea>
                             <input type="hidden" name="prop" value="{{ url }}">
                             <input type="hidden" name="list_id" value="{{ loop.index }}">
                             <input class="commentButton" type="submit" value="Comentar" style="float: inline-end;" hidden>

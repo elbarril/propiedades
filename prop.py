@@ -1,85 +1,43 @@
+import re
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+import search
 
-import json
-import re
-import time
 
-from search import SEARCH, JSON_PATH, SEARCH_PATH
+def get_ambs_with_format(source:str, ambs_id:str) -> str:
+    format = search.get_ambs_format(source)
+    ambs = search.get_ambs(ambs_id)
+    return format % (ambs, "s" if int(ambs) > 1 else "")
 
-import json
-from os import walk
+def get_rooms_with_format(source:str, rooms_id:str) -> int:
+    format = search.get_rooms_format(source)
+    rooms = search.get_rooms(rooms_id)
+    return format % (rooms, "es" if int(rooms) > 1 else "")
 
-#FIXME once create another search server needs to be rebooted to update SEARCH_ENTITIES
-SEARCH_ENTITIES:dict[str, dict] = {}
-for search_file in next(walk(SEARCH_PATH), (None, None, []))[2]:
-    with open(SEARCH_PATH / search_file, "r", encoding="utf-8") as file:
-        SEARCH_ENTITIES.setdefault(search_file.split(".")[0], json.load(file))
+def get_locations(source:str, locations_ids:int) -> str:
+    locations_list = search.get_locations_list(locations_ids)
+    locations_join = search.get_locations_join(source)
+    return locations_join.join(locations_list)
 
-def save_search(search):
-    try:
-        entity = {
-            "locations": search.getlist("locations"),
-            "meters": search.get("meters"),
-            "price": search.get("price"),
-            "ambs": search.get("ambs"),
-            "rooms": search.get("rooms")
-        }
-        file_name = search.get("name").replace(" ", "") + ".json"
-        with open(SEARCH_PATH / file_name, "w", encoding='utf-8') as f:
-            json.dump(entity, f)
-    except Exception as e:
-        print(e)
+def get_url(source:str, entity:dict):
+    base_url = search.get_base_url(source)
+    price = search.get_price(entity["price"])
+    ambs = get_ambs_with_format(source, entity["ambs"])
+    rooms = get_rooms_with_format(source, entity["rooms"])
+    locations = get_locations(source, entity["locations"])
+    return base_url % (locations, rooms, ambs, price)
 
-def get_file_path(source, name):
-    return  JSON_PATH / f"{source}_{name}.json"
-
-def get_url(source, entity):
-    web_options = SEARCH["sources"][source]
-
-    base = web_options.get("base_url")
-    rooms_format = web_options.get("rooms_format")
-    ambs_format = web_options.get("ambs_format")
-
-    locations_list = [SEARCH["locations"][int(location)] for location in entity.get("locations")]
-    ambs_int = int(SEARCH["ambs"][int(entity.get("ambs"))])
-    rooms_int = int(SEARCH["rooms"][int(entity.get("rooms"))])
-    price_str = SEARCH["prices"][int(entity.get("price"))]
-
-    ambs_str = ambs_format % (ambs_int, "s" if ambs_int > 1 else "")
-    rooms_str = rooms_format % (rooms_int, "es" if rooms_int > 1 else "")
-    locations_join = web_options.get("locations_join")
-    locations_str = locations_join.join(locations_list)
-
-    return base % (locations_str, rooms_str, ambs_str, price_str)
-
-def load_props(file, filter_key=None, filter_value=True):
-    props = {}
-
-    try:
-        with open(file, "r") as f:
-            props = json.load(f)
-    except Exception as e:
-        print(e)
-    else:
-        if filter_key is not None:
-            props = {key: value for key, value in props.items() if value.get(filter_key) == filter_value}
-
-    return props
-
-def save_props(props, file):
-    try:
-        with open(file, "w", encoding='utf-8') as f:
-            json.dump(props, f)
-    except Exception as e:
-        print(e)
-
-def update_prop(prop, update, file):
-    props = load_props(file)
-    if prop in props:
-        props[prop].update(update)
-    save_props(props, file)
+def get_search_data(entity) -> dict:
+    search_data = {
+        "locations": [location.replace("-", " ").title() for location in search.get_locations_list(entity["locations"])],
+        "ambs": search.get_ambs(entity["ambs"]).replace("-", " ").title(),
+        "rooms": search.get_rooms(entity["rooms"]).replace("-", " ").title(),
+        "price": search.get_price(entity["price"]).replace("-", " ").title(),
+        "meters": entity["meters"]
+    }
+    return search_data
 
 def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, id_attr, prop_data_xpath, prop_image_xpath):
     driver = webdriver.Chrome()
@@ -94,7 +52,6 @@ def find_props(url, prop_xpath, wait_xpath, next_xpath, path_attr, id_attr, prop
 
     for prop in props:
         prop_list_item = {
-            "id": prop.get_attribute(id_attr),
             "path": prop.get_attribute(path_attr),
             "content": prop.text,
             "data": {}
@@ -141,69 +98,60 @@ def get_prop_meters(prop_content):
     if meters_match: meters = int(meters_match.groups()[0])
     return meters
 
-def search_props(source, entity_name):
-    entity = SEARCH_ENTITIES.get(entity_name)
-    locations = [SEARCH["locations"][int(location)] for location in entity["locations"]]
-    file = get_file_path(source, entity_name)
-    min_meters = entity["meters"]
-    max_value = entity["price"]
-    web_options = SEARCH["sources"][source]
-    date = time.strftime("%d-%m-%Y") + "\n"
+def validate_price_and_meters(max_price:str, min_meters:str, content:str):
+    meters = get_prop_meters(content)
+    price = get_prop_price(content)
+    return int(meters) >= int(min_meters) and int(price) <= int(max_price)
+
+def search_props(source, name):
+    entity = search.get_entity(name)
     url = get_url(source, entity)
-    props = load_props(file)
+    props = search.load_props(source, name)
+    base_url = search.get_base_url(source)
 
-    base = web_options.get("base_url")
-
-    keep_looking = True
     page = 1
     index = 0
+    keep_looking = True
     while keep_looking:
-        xpaths = dict(web_options.get("xpaths"))
+        xpaths = dict(search.get_xpaths(source))
         xpaths["next_xpath"] = str(xpaths["next_xpath"] % str(page+1))
 
         new_props, next_page = find_props(url, **xpaths)
-
         for new_prop in new_props:
-            index += 1
             path = new_prop["path"]
-            if not path: continue
             content = new_prop["content"]
-            path = path if "http" in path else base[:-1] + path
-            meters = get_prop_meters(content)
-            price = get_prop_price(content)
-            if int(meters) < int(min_meters) or int(price) > int(max_value): continue
-            
-            id = new_prop["id"]
-            data = new_prop["data"]
-            image = new_prop["image"]
-            title = new_prop["title"]
+            if path and validate_price_and_meters(search.get_price(entity["price"]), entity["meters"], content):
+                index += 1
+                path = path if "http" in path else base_url[:-1] + path
+                data = new_prop["data"]
+                image = new_prop["image"]
+                title = new_prop["title"]
 
-            if not path in props:
-                prop = {
-                    "id": id,
-                    "date": date,
-                    "index": index,
-                    "content": content,
-                    "revised": False,
-                    "rejected": False,
-                    "data": data,
-                    "image": image,
-                    "title": title
-                }
+                if not path in props:
+                    prop = {
+                        "date": time.strftime("%d-%m-%Y") + "\n",
+                        "index": index,
+                        "content": content,
+                        "revised": False,
+                        "rejected": False,
+                        "data": data,
+                        "image": image,
+                        "title": title
+                    }
 
-                props.update({path: prop})
-            elif "image" not in props[path] or not bool(props[path]["image"]):
-                props[path].update({"image": image})
-            elif "title" not in props[path] or not bool(props[path]["title"]):
-                props[path].update({"title": title})
-            elif "data" not in props[path] or not bool(props[path]["data"]):
-                props[path].update({"data": data})
+                    props.update({path: prop})
+                else:
+                    if "image" not in props[path] or not bool(props[path]["image"]):
+                        props[path].update({"image": image})
+                    if "title" not in props[path] or not bool(props[path]["title"]):
+                        props[path].update({"title": title})
+                    if "data" not in props[path] or not bool(props[path]["data"]):
+                        props[path].update({"data": data})
 
-        if page > len(locations) // 2 or next_page is None:
-            keep_looking = False
+        keep_looking = page <= len(entity["locations"]) and next_page
 
         if keep_looking:
             page += 1
             url = next_page
     
-    save_props(props, file)
+    search.save_props(source, name, props)

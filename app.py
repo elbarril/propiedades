@@ -1,24 +1,22 @@
 from flask import Flask, render_template, redirect, request
 
-from prop import SEARCH_ENTITIES, SEARCH, save_search
-from prop import search_props, load_props, update_prop
-from prop import get_file_path, get_url
+from prop import get_search_data, search_props, get_url
+from search import save_search, get_entities, get_entity, load_props, update_prop, get_sources
 
 def get_list_template(name, source, can_search, **options):
-    entity = SEARCH_ENTITIES.get(name)
-    file = get_file_path(source, name)
+    entity = get_entity(name)
+    search = get_search_data(entity)
     url = get_url(source, entity)
-    props = load_props(file, **options)
-    return render_template('list.html', entity=entity, search=SEARCH, source=source, props=props, props_url=url, name=name, can_search=can_search)
+    props = load_props(source, name, **options)
+    return render_template('list.html', name=name, source=source, props_url=url, search=search, props=props, can_search=can_search)
 
 def perform_request(name, source, update_field, extra_path=""):
     if request.method == 'POST':
-        file = get_file_path(source, name)
         prop = request.form.get("prop", "")
         list_id = request.form.get("list_id", "")
         field_name, field_value = update_field
         value = request.form.get(field_name, field_value)
-        update_prop(prop, {field_name: value}, file)
+        update_prop(source, name, prop, {field_name: value})
         return redirect("/" + name + "/" + source + extra_path + "#"+list_id)
     return redirect("/")
 
@@ -26,10 +24,18 @@ app = Flask(__name__)
 
 @app.route('/new', methods=["GET", "POST"])
 def new():
+    entity = {
+        "locations": request.form.getlist("locations"),
+        "meters": request.form.get("meters"),
+        "price": request.form.get("price"),
+        "ambs": request.form.get("ambs"),
+        "rooms": request.form.get("rooms")
+    }
     if request.method == 'POST':
-        save_search(request.form)
+        save_search(request.form.get("name"), entity)
         return redirect("/")
-    return render_template('new.html', search=SEARCH)
+    search = get_search_data(entity)
+    return render_template('new.html', search=search)
 
 @app.route('/<name>/<source>/search')
 def search(name, source):
@@ -72,7 +78,9 @@ def list_rejected(name, source):
 
 @app.route('/')
 def home():
-    return render_template('index.html', entities=SEARCH_ENTITIES, search=SEARCH, can_create=is_local)
+    searches = {name: get_search_data(entity) for name,entity in get_entities().items()}
+    sources = get_sources()
+    return render_template('index.html', searches=searches, sources=sources, can_create=is_local)
 
 if is_local:
     if DEBUG:

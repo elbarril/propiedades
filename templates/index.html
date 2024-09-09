@@ -11,26 +11,26 @@
         <h2>Lista de Busquedas</h2>
 
         <div class="cards">
-            {% for name,entity in entities.items() %}
+            {% for name,search in searches.items() %}
                 <div class="card" id="{{ name }}">
                     <div class="card-content">
                         <h2>{{ name|title }}</h2>
 
                         <ul class="list list-scroll">
-                            {% for location in entity.locations %}
-                               <li class="list-item">{{ search.locations[location|int]|replace("-", " ")|title }},</li>
+                            {% for location in search.locations %}
+                               <li class="list-item">{{ location }},</li>
                             {% endfor %}
                         </ul>
 
                         <ul class="list">
-                            <li class="list-item list-item-flex"><strong>Ambientes: </strong>{{ search.ambs[entity.ambs|int] }}</li>
-                            <li class="list-item list-item-flex"><strong>Habitaciones: </strong>{{ search.rooms[entity.rooms|int] }}</li>
-                            <li class="list-item list-item-flex"><strong>Valor: </strong>U$D {{ search.prices[entity.price|int] }}</li>
-                            <li class="list-item list-item-flex"><strong>Tamaño: </strong>{{ entity.meters }} m&#xB2;</li>
+                            <li class="list-item list-item-flex"><strong>Ambientes: </strong>{{ search.ambs }}</li>
+                            <li class="list-item list-item-flex"><strong>Habitaciones: </strong>{{ search.rooms }}</li>
+                            <li class="list-item list-item-flex"><strong>Valor: </strong>U$D {{ search.price }}</li>
+                            <li class="list-item list-item-flex"><strong>Tamaño: </strong>{{ search.meters }} m&#xB2;</li>
                         </ul>
 
                         <div class="buttons">
-                            {% for source in search.sources.keys() %}
+                            {% for source in sources %}
                                 <a class="button" href="/{{ name }}/{{ source }}">{{ source|title }}</a>
                             {% endfor %}
                         </div>
