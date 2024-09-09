@@ -1,7 +1,7 @@
 <div class="details">
     <a class="link" href="{{ props_url }}" target="_blank">
         <h2>
-            <span>{{ name }} - {{ source }}: </span>
+            <span>Búsqueda: {{ name }} - {{ source }}: </span>
             <span id="amount">{{ props|length }}</span>
             {% if request.endpoint == 'list_rejected' %}
                 <span> (rechazadas)</span>

@@ -1,7 +1,8 @@
 from flask import Flask, render_template, redirect, request
-
 from prop import get_search_data, search_props, get_url
-from search import save_search, get_entities, get_entity, load_props, update_prop, get_sources
+from search import save_search, get_entities, get_entity, load_props, update_prop, get_sources, get_search
+
+app = Flask(__name__)
 
 def get_list_template(name, source, can_search, **options):
     entity = get_entity(name)
@@ -17,30 +18,28 @@ def perform_request(name, source, update_field, extra_path=""):
         field_name, field_value = update_field
         value = request.form.get(field_name, field_value)
         update_prop(source, name, prop, {field_name: value})
-        return redirect("/" + name + "/" + source + extra_path + "#"+list_id)
+        return redirect(f"/{name}/{source}{extra_path}#{list_id}")
     return redirect("/")
 
-app = Flask(__name__)
+@app.route('/')
+def home():
+    searches = {name: get_search_data(entity) for name, entity in get_entities().items()}
+    sources = get_sources()
+    return render_template('index.html', searches=searches, sources=sources, can_create=is_local)
 
 @app.route('/new', methods=["GET", "POST"])
 def new():
-    entity = {
-        "locations": request.form.getlist("locations"),
-        "meters": request.form.get("meters"),
-        "price": request.form.get("price"),
-        "ambs": request.form.get("ambs"),
-        "rooms": request.form.get("rooms")
-    }
     if request.method == 'POST':
-        save_search(request.form.get("name"), entity)
+        save_search(request.form.to_dict())
         return redirect("/")
-    search = get_search_data(entity)
+    
+    search = get_search()
     return render_template('new.html', search=search)
 
 @app.route('/<name>/<source>/search')
 def search(name, source):
     search_props(source, name)
-    return redirect("/" + name + "/" + source)
+    return redirect(f"/{name}/{source}")
 
 @app.route('/<name>/<source>/comment', methods=["POST"])
 def comment(name, source):
@@ -62,12 +61,6 @@ def unreject(name, source):
 def reject(name, source):
     return perform_request(name, source, ("rejected", True))
 
-
-DEBUG = True
-is_local = False
-if __name__ == '__main__':
-    is_local = True
-
 @app.route('/<name>/<source>')
 def list(name, source):
     return get_list_template(name, source, can_search=is_local, filter_key="rejected", filter_value=False)
@@ -76,14 +69,8 @@ def list(name, source):
 def list_rejected(name, source):
     return get_list_template(name, source, can_search=is_local, filter_key="rejected", filter_value=True)
 
-@app.route('/')
-def home():
-    searches = {name: get_search_data(entity) for name,entity in get_entities().items()}
-    sources = get_sources()
-    return render_template('index.html', searches=searches, sources=sources, can_create=is_local)
-
-if is_local:
-    if DEBUG:
-        app.run(debug=True)
-    else:
-        app.run(debug=False, host="0.0.0.0")
+DEBUG = True
+is_local = False
+if __name__ == '__main__':
+    is_local = True
+    app.run(debug=DEBUG) if DEBUG else app.run(debug=False, host="0.0.0.0")

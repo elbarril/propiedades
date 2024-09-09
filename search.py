@@ -132,6 +132,9 @@ SEARCH = {
     }
 }
 
+def get_search() -> dict:
+    return SEARCH
+
 def get_sources() -> list:
     return list(SEARCH["sources"].keys())
 
@@ -142,9 +145,9 @@ def get_entities() -> dict:
             search_entities.setdefault(search_file.split(".")[0], json.load(file))
     return search_entities
 
-def save_search(name:str, entity:dict):
+def save_search(entity:dict):
     try:
-        file_name = name.replace(" ", "") + ".json"
+        file_name = entity["name"].replace(" ", "") + ".json"
         with open(SEARCH_PATH / file_name, "w", encoding='utf-8') as f:
             json.dump(entity, f)
     except Exception as e:
