@@ -6,7 +6,7 @@
     
     <ul id="props" class="cards list">
         {% for url,prop in props.items() %}
-            <li class="card list-item {% if prop.revised %}revised{% endif %} item" id="{{  loop.index  }}">
+            <li class="card list-item {% if prop.revised %}active{% endif %} item" id="{{  loop.index  }}">
                 <div class="card-content">
                     <div class="list-item-header">
                         <span>{{ prop.title[:80]|default("Sin título", true) }}{{ "..." if prop.title|length > 79 }}</span>
@@ -37,14 +37,14 @@
                                 <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.revised %}unrevise{% else %}revise{% endif %}" method="post">
                                     <input type="hidden" name="prop" value="{{ url }}">
                                     <input type="hidden" name="list_id" value="{{ loop.index }}">
-                                    <input class="button reviseButton" type="submit" value="{% if prop.revised %}Restaurar{% else %}Revisado{% endif %}">
+                                    <input class="button reviseButton {% if prop.revised %}active{% endif %}" type="submit" value="{{ "Revisado" if prop.revised else "Revisar" }}">
                                 </form>
                             {% endif %}
 
                             <form class="form list-item-action" action="/{{ name }}/{{ source }}/{% if prop.rejected %}unreject{% else %}reject{% endif %}" method="post">
                                 <input type="hidden" name="prop" value="{{ url }}">
                                 <input type="hidden" name="list_id" value="{{ loop.index }}">
-                                <input class="button rejectButton" type="submit" value="{% if prop.rejected %}Restaurar{% else %}Rechazar{% endif %}">
+                                <input class="button rejectButton {% if prop.rejected %}active{% endif %}" type="submit" value="{{"Restaurar" if prop.rejected else "Rechazar" }}">
                             </form>
                         </div>
                     </div>

@@ -30,7 +30,15 @@ def home():
 @app.route('/new', methods=["GET", "POST"])
 def new():
     if request.method == 'POST':
-        save_search(request.form.to_dict())
+        entity = {
+            "name": request.form.get("name"),
+            "locations": request.form.getlist("locations"),
+            "ambs": request.form.get("ambs"),
+            "rooms": request.form.get("rooms"),
+            "price": request.form.get("price"),
+            "meters": request.form.get("meters"),
+        }
+        save_search(entity)
         return redirect("/")
     
     search = get_search()

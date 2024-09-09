@@ -3,7 +3,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import search
 
 
@@ -43,47 +42,47 @@ def find_props(url: str, prop_xpath: str, wait_xpath: str, next_xpath: str, path
     driver = webdriver.Chrome()
     driver.get(url)
 
+    props_list = []
+    next_page = None
+
     try:
         WebDriverWait(driver, 5).until(
             lambda d: driver.find_element(By.XPATH, wait_xpath).is_displayed()
         )
-    except Exception as error:
-        print("Can't connect to the page.")
-        raise error
 
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-    props = driver.find_elements(By.XPATH, prop_xpath)
-    props_list = []
+        for prop in driver.find_elements(By.XPATH, prop_xpath):
+            prop_item = {
+                "path": prop.get_attribute(path_attr),
+                "content": prop.text,
+                "data": {}
+            }
 
-    for prop in props:
-        prop_item = {
-            "path": prop.get_attribute(path_attr),
-            "content": prop.text,
-            "data": {}
-        }
+            for key, xpath in prop_data_xpath.items():
+                try:
+                    prop_item["data"][key] = prop.find_element(By.XPATH, xpath).text
+                except:
+                    continue
 
-        for key, xpath in prop_data_xpath.items():
             try:
-                prop_item["data"][key] = prop.find_element(By.XPATH, xpath).text
+                image = prop.find_element(By.XPATH, prop_image_xpath)
+                prop_item.update({
+                    "title": image.get_attribute("alt"),
+                    "image": image.get_attribute("src")
+                })
             except:
-                continue
+                prop_item.update({"title": "", "image": ""})
+
+            props_list.append(prop_item)
 
         try:
-            image = prop.find_element(By.XPATH, prop_image_xpath)
-            prop_item.update({
-                "title": image.get_attribute("alt"),
-                "image": image.get_attribute("src")
-            })
+            next_page = driver.find_element(By.XPATH, next_xpath).get_property("href")
         except:
-            prop_item.update({"title": "", "image": ""})
+            next_page = None
 
-        props_list.append(prop_item)
-
-    try:
-        next_page = driver.find_element(By.XPATH, next_xpath).get_property("href")
-    except:
-        next_page = None
+    except Exception as error:
+        print("Errors ocurrs.")
 
     driver.close()
     return props_list, next_page
