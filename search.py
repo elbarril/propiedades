@@ -152,6 +152,7 @@ def get_sources() -> list:
 
 def get_entities() -> dict:
     search_entities:dict[str, dict] = {}
+    if not SEARCH_PATH.exists(): SEARCH_PATH.mkdir(parents=True)
     for search_file in next(walk(SEARCH_PATH), (None, None, []))[2]:
         with open(SEARCH_PATH / search_file, "r", encoding="utf-8") as file:
             search_entities.setdefault(search_file.split(".")[0], json.load(file))
@@ -160,10 +161,10 @@ def get_entities() -> dict:
 def save_search(entity:dict):
     try:
         file_name = entity["name"].replace(" ", "") + ".json"
-        with open(SEARCH_PATH / file_name, "w", encoding='utf-8') as f:
+        with open(SEARCH_PATH / file_name, "w+", encoding='utf-8') as f:
             json.dump(entity, f)
     except Exception as e:
-        print(e)
+        raise e
 
 def filter_props(props:dict, filter_key:str, filter_value) -> dict:
     return {key: value for key, value in props.items() if value.get(filter_key) == filter_value}
