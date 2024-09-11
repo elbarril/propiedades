@@ -112,7 +112,7 @@ SEARCH = {
                     "expensas": ".//div[@data-qa='expensas']",
                     "direccion": ".//div[contains(@class, 'postingAddress')]",
                     "metros": ".//h3[@data-qa='POSTING_CARD_FEATURES']/span[1]",
-                    "habitaciones": ".//h3[@data-qa='POSTING_CARD_FEATURES']/span[2]",
+                    "dormitorios": ".//h3[@data-qa='POSTING_CARD_FEATURES']/span[2]",
                     "hace": "./div/div[2]/div[2]/div[2]"
                 },
                 "next_xpath": "//a[@data-qa='PAGING_%s']",
@@ -133,7 +133,7 @@ SEARCH = {
                     "precio": ".//p[@class='card__price']",
                     "direccion": ".//p[@class='card__address']",
                     "metros": ".//ul[@class='card__main-features']/li[1]",
-                    "habitaciones": ".//ul[@class='card__main-features']/li[2]",
+                    "dormitorios": ".//ul[@class='card__main-features']/li[2]",
                     "hace": "./div/div[2]/div[2]/div[2]",
                 },
                 "next_xpath": "//li[@class='pagination__page']/a[text()='%s']",
